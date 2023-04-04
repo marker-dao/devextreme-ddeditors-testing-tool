@@ -73,22 +73,63 @@
                             $('#widgets_specific').empty();
 
                             selectedWidget = name;
-                            if (selectedWidget === 'dxDateBox') {
-                                addWidgetSpecific('With List', { type: 'time' });
-                                addWidgetSpecific('With Calendar', { type: 'date' });
-                                addWidgetSpecific('With Calendar and Time', { type: 'datetime' });
+
+                            if (!['dxDateBox', 'dxLookup', 'dxDropDownBox', 'dxDropDownButton', 'dxColorBox'].includes(selectedWidget)) {
+                                addWidgetSpecific('applyValueMode: instantly', {
+                                    applyValueMode: 'instantly',
+                                });
+
+                                addWidgetSpecific('applyValueMode: useButtons', {
+                                    applyValueMode: 'useButtons',
+                                });
                             }
+
+                            if (selectedWidget === 'dxColorBox') {
+                                addWidgetSpecific('editAlphaChannel + applyValueMode: useButtons', { editAlphaChannel: true, applyValueMode: 'useButtons' });
+                                addWidgetSpecific('editAlphaChannel + applyValueMode: instantly', { editAlphaChannel: true, applyValueMode: 'instantly' });
+                            }
+
+                            else if (selectedWidget === 'dxDateBox') {
+                                addWidgetSpecific('List + applyValueMode: instantly', { type: 'time', applyValueMode: 'instantly' });
+                                addWidgetSpecific('List + applyValueMode: useButtons', { type: 'time', applyValueMode: 'useButtons' });
+
+                                addWidgetSpecific('Calendar + applyValueMode: instantly', { type: 'date', applyValueMode: 'instantly' });
+                                addWidgetSpecific('Calendar + applyValueMode: useButtons', { type: 'date', applyValueMode: 'useButtons' });
+
+                                addWidgetSpecific('Calendar and Time + applyValueMode: useButtons', { type: 'datetime', applyValueMode: 'useButtons' });
+
+                                addWidgetSpecific('Rollers', { pickerType: 'rollers' });
+                            }
+
                             else if (selectedWidget === 'dxLookup') {
-                                addWidgetSpecific('With Popover', { usePopover: true });
-                                addWidgetSpecific('With Popup', { usePopover: false });
+                                addWidgetSpecific('Popover', { usePopover: true });
+                                addWidgetSpecific('Popover + applyValueMode: instantly', { usePopover: true, applyValueMode: 'instantly' });
+                                addWidgetSpecific('Popover + applyValueMode: useButtons', { usePopover: true, applyValueMode: 'useButtons' });
+                                
+                                addWidgetSpecific('Popup', { usePopover: false });
+                                addWidgetSpecific('Popup + applyValueMode: instantly', { usePopover: false, applyValueMode: 'instantly' });
+                                addWidgetSpecific('Popup + applyValueMode: useButtons', { usePopover: false, applyValueMode: 'useButtons' });
                             }
+
                             else {
                                 if (selectedWidget === 'dxDropDownBox') {
                                     widgetSpecificOptions = {
                                         width: 500,
-                                        contentTemplate: () => $('<div>').css({ width: 200, height: 200})
+                                        contentTemplate: () => $(`
+                                            <div>
+                                                <button>First button</button>
+                                                <button>Second button</button>
+                                            </div>
+                                        `).css({ width: 200, height: 200})
                                     };
                                 }
+                                
+                                else if (selectedWidget === 'dxDropDownButton') {
+                                    widgetSpecificOptions = {
+                                        width: 200,
+                                    };
+                                }
+                                
                                 initCases();
                             }
                         }
