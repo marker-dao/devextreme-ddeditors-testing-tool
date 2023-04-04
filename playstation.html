@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DropDownEditors testing tool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../artifacts/css/dx.light.css"/>
+    <script type="text/javascript" src="../artifacts/js/jquery.js"></script>
+    <script type="text/javascript" src="../artifacts/js/dx.all.debug.js" charset="utf-8"></script>
+</head>
+<body>
+    <div id="container" style="height: 100px; position: absolute;"></div>
+    <div id="dynamicContainer" style="height: 35%; position: absolute;"></div>
+
+    Widgets:
+    <div id='widgets' style="padding-top: 10px"></div>
+    <br>
+    <div id='widgets_specific'></div>
+    <br>
+
+    Cases:
+    <div id='cases' style="padding-top: 10px"></div>
+    
+    <br>
+    <div id="editor"></div>
+
+    <script>
+        $(function() {
+            let selectedWidget = null;
+            let widgetSpecificOptions = {};
+            let editor = null;
+
+            const initCases = () => {
+                cases.forEach(({name, options}) => {
+                    $('<div>')
+                        .css({ margin: '5px'})
+                        .dxButton({
+                            text: name,
+                            onClick: () => {
+                                editor?.dispose();
+                                editor = $('#editor')[selectedWidget]
+                                            (Object.assign(options, widgetSpecificOptions, { opened: true }))
+                                            [selectedWidget]('instance');
+                            }
+                        }).appendTo('#cases');
+                });
+            };
+
+            const addWidgetSpecific = (text, options) => {
+                $('<div>')
+                    .css({ margin: '5px'})
+                    .dxButton({
+                        text,
+                        onClick: () => {
+                            clear();
+                            widgetSpecificOptions = options;
+                            initCases();
+                        }
+                    }).appendTo('#widgets_specific');
+            };
+
+            const clear = () => {
+                editor?.dispose();
+                $('#cases').empty();
+            }
+
+            widgets.forEach(name => {
+                $('<div>')
+                    .css({ margin: '5px'})
+                    .dxButton({
+                        text: name,
+                        onClick: () => {
+                            clear();
+                            $('#widgets_specific').empty();
+
+                            selectedWidget = name;
+                            if (selectedWidget === 'dxDateBox') {
+                                addWidgetSpecific('With List', { type: 'time' });
+                                addWidgetSpecific('With Calendar', { type: 'date' });
+                                addWidgetSpecific('With Calendar and Time', { type: 'datetime' });
+                            }
+                            else if (selectedWidget === 'dxLookup') {
+                                addWidgetSpecific('With Popover', { usePopover: true });
+                                addWidgetSpecific('With Popup', { usePopover: false });
+                            }
+                            else {
+                                if (selectedWidget === 'dxDropDownBox') {
+                                    widgetSpecificOptions = {
+                                        width: 500,
+                                        contentTemplate: () => $('<div>').css({ width: 200, height: 200})
+                                    };
+                                }
+                                initCases();
+                            }
+                        }
+                }).appendTo('#widgets');
+            });
+        });
+
+        const widgets = ['dxSelectBox', 'dxTagBox', 'dxAutocomplete', 'dxDateBox', 'dxLookup', 'dxColorBox', 'dxDropDownBox', 'dxDropDownButton'];
+        const cases = [
+            {
+                name: 'dropDownOptions: default',
+                options: {
+                    items: widgets,
+                    dropDownOptions: {
+                        container: '#container',
+                    }
+                },
+            },
+            {
+                name: 'dropDownOptions: { toolbarItems: [] }',
+                options: {
+                    items: widgets,
+                    dropDownOptions: {
+                        container: '#container',
+                        toolbarItems: [],
+                    }
+                },
+            },
+            {
+                name: 'dropDownOptions: { toolbarItems: [ <...> ] }',
+                options: {
+                    items: widgets,
+                    dropDownOptions: {
+                        container: '#container',
+                        toolbarItems: [
+                            {
+                                widget: 'dxButton',
+                                toolbar: 'top',
+                                options: { text: 'First top' },
+                            },
+                            {
+                                widget: 'dxButton',
+                                toolbar: 'top',
+                                options: { text: 'Last top' },
+                            },
+                            {
+                                widget: 'dxButton',
+                                toolbar: 'bottom',
+                                options: { text: 'First bottom' },
+                            },
+                            {
+                                widget: 'dxButton',
+                                toolbar: 'bottom',
+                                options: { text: 'Last bottom' },
+                            },
+                        ],
+                    }
+                },
+            },
+        ];
+    </script>
+</body>
+</html>
